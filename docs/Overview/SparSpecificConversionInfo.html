@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>Dxf2Svg Overview</TITLE>
+<link rel="stylesheet" type="text/css" href="overview.css" />
+</HEAD>
+
+<BODY TEXT="#000000" VLINK="#800000" ALINK="#FF00FF" BACKGROUND="../images/back.gif">
+
+<H1>Spar Specific Conversion Information</H1>
+<OL>
+	<LI> Use a <CODE>-include menu.svg</CODE> to include the menu into all the converted SVGs.
+	<LI> Use 
+<PRE>:add svg { </PRE><PRE class="indent">
+"xmlns:dxf2svg" = "http://www.l-3com.com/svgns";</PRE>
+<PRE>}.</PRE>
+	<LI> From now on all illustrations converted with <CODE>Dxf2Svg</CODE> will have a super element (below the root svg element) which groups all the elements into a page. Example:<BR>
+	<CODE>&lt;svg&gt;<BR>
+	&lt;g id="Page_1"&gt;<BR>
+	&lt;... elements...&gt;<BR>
+	&lt;/g&gt;<BR>
+	&lt;/svg&gt;<BR></CODE>
+	<LI> There is a <CODE>menu.svg</CODE> which is merged into all the finished SVGs. This is done through in step 1, but when it is done an additional element is calculated and added to the converted SVG automatically at conversion time, and it looks like this:
+	<CODE>&lt;dxf2svg:init height="450.34" width="778.97" activatePalette="true"/&gt;</CODE> if 
+	the illustration is a wiring diagram, and if it is not, <CODE>activatePalette</CODE> is 
+	set to <CODE>false</CODE>. This detection occurs automatically, and switches off the colour
+	selection palette.
+	<LI> <A HREF="wirerun">Wire</A> runs are converted from lines, arcs or any other <CODE>SvgDoubleEndedGraphicElement</CODE>s into <CODE>&lt;path&gt;</CODE>s. Extra attributes can be applied via the <CODE>config.d2s</CODE> by <CODE>:add</CODE>ing to either 'path' or 'withid' of 'wire_run' which is a predifined id attribute of wires.
+</OL>
+
+</BODY>
+</HTML>

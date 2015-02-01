@@ -1,0 +1,320 @@
+<?xml version="1.0"?>
+
+<!-- ================================================================== -->
+<!--	FileName:	build.xml											-->
+<!--																	-->
+<!--	Project:	Dxf2Svg												-->
+<!--																	-->
+<!--	Purpose:	Compiles and builds the Dxf2Svg project into 		-->
+<!--				executable form and other useful tasks.				-->
+<!--				Use: ant -projecthelp for more target information.  -->
+<!--                or feel free to contact the author about anything,  -->
+<!--                anything at all.                                    -->
+<!--																	-->
+<!--	Date:		January 6, 2003										-->
+<!--																	-->
+<!--	Author:		Andrew Nisbet										-->
+<!--																	-->
+<!--	Environment:Java(TM) 2 Runtime Environment, Standard Edition	-->
+<!--				(build 1.4.0_01-b03), jakarta ant 1.5.3				-->
+<!--																	-->
+<!--	Version:	1.00 - January 7, 2003	Initial release.			-->
+<!--				1.01 - January 8, 2003	Removed makeclean from		-->
+<!--				makejar and added it to makeall.					-->
+<!--				1.02 - January 10, 2003	Added update attrib to 		-->
+<!--				makejar. If jar exists update it.					-->
+<!--				1.03 - January 27, 2003 Removed ./doc deletion rule -->
+<!--				1.04 - February 10, 2003 Minor description changes. -->
+<!--				and added Overview attribute to Javadoc target.     -->
+<!--				1.05 - May 6, 2003 excluded Internals and todo dir  -->
+<!--				from 'distribution' target. Upgraded to Ant 1.5.3.	-->
+<!--				2.00 - June 5, 2003 reorganized Dxf2Svg into		-->
+<!--				packages and re-wrote and tested many targets.		-->
+<!--				2.01 - June 12, 2003 added debug attribs to javac.	-->
+<!--				2.02 - November 27, 2003 changed debug to true.	    -->
+<!--				2.01 - June 17, 2004 removed test directory from    -->
+<!--				distribution.	                                    -->
+<!--				2.02 - August 31, 2004 Changed copyright to DND.    -->
+<!--                2.03 - February 10, 2005 Added deprecation attribute-->
+<!--                for compiling under new versions of Java.           -->
+<!--                2.10 - March 9, 2005 Changed dir 'R1.0' to 'source'.-->
+<!--                2.11 - March 10, 2005 Changed Copyright notice.     -->
+<!--                2.50 - March 18, 2005 Added Wire Trace name space.  -->
+<!--                2.51 - March 30, 2005 Added Part Number name space. -->
+<!--                1.52 - May 10, 2005 Added distributionwithsource.   -->
+<!--																	-->
+<!--	TODO:															-->
+<!--																	-->
+<!-- ================================================================== -->
+
+<!-- ################################################################## -->
+<!-- #####                                                        ##### -->
+<!-- #####                    WARNING:                            ##### -->
+<!-- #####                    =======                             ##### -->
+<!-- #####      Some targets delete the build directory so        ##### -->
+<!-- #####            don't store valuables in it.                ##### -->
+<!-- #####                                                        ##### -->
+<!-- ################################################################## -->
+
+
+<project name="Dxf2Svg Build File" default="init" basedir=".">
+	<!-- Global values. -->
+	<property name="application"	value="Dxf2Svg"/>
+	
+	<!-- Required directories. -->
+	<property name="doc.dir" 		value="docs"/>
+	<property name="archive.dir" 	value="archive"/>
+	<property name="build.dir"		value="build"/>
+	<property name="test.dir"		value="test"/>
+	<property name="src.dir"		value="source"/>
+	<property name="base.dir"		value="${src.dir}/dxf2svg"/>
+	<property name="sally.dir"		value="${base.dir}/sally"/>
+	<property name="svg.dir"		value="${base.dir}/svg"/>
+	<property name="animation.dir"	value="${base.dir}/animation"/>
+	<property name="util.dir"		value="${base.dir}/util"/>
+	<property name="wiretrace.dir"  value="${base.dir}/util/wiretrace"/>
+	<property name="svglink.dir"    value="${base.dir}/util/svglink"/>
+	
+	<!-- Manifest attributes for executable jar. -->
+	<property name="main.class"		value="dxf2svg.${application}"/>
+	<property name="class.path"		value="lib/Utils.jar"/>
+	
+	
+	
+<!-- ================= Do not edit below this line. ================= -->
+	
+	
+	
+	<!-- =========================================== -->
+	<!-- 				Init section				 -->
+	<!-- 				============				 -->
+	<!-- Issues message about possible targets		 -->
+	<!-- and exits.								 	 -->
+	<!-- =========================================== -->	
+	<target name="init" 
+		description="Calls the makejar target.">
+		<antcall target="makejar"/>
+	</target>
+	
+	
+	
+	<!-- =========================================== -->
+	<!-- 				makeall section				 -->
+	<!-- 				===============				 -->
+	<!-- Make an executable jar, documentation and 	 -->
+	<!-- cleans up.								 	 -->
+	<!-- =========================================== -->	
+	<target name="makeall"
+		description="Builds executable jar file; republishes docs; deletes build dir.">
+		<antcall target="makeclean"/>
+		<!-- Run these in separate threads to hasten compilation. -->
+		<!-- Each thread's messages will be jumbled together. -->
+		<parallel>
+			<antcall target="makejar"/>
+			<antcall target="makedoc"/>
+		</parallel>
+		<antcall target="makeclean"/>
+	</target>	
+	
+	
+	
+	<!-- =========================================== -->
+	<!-- 				Archive section				 -->
+	<!-- 				===============				 -->
+	<!-- Archives the entire contents of this dir	 -->
+	<!-- with the exception of the contents of the	 -->
+	<!-- archive directory.							 -->
+	<!-- =========================================== -->
+	<target name="archive"
+		description="Creates archive of entire project tree.">
+		<!-- if the archive dir doesn't exist make one. -->
+		<mkdir dir="${archive.dir}"/>
+		<!-- collect the time stamp -->
+		<tstamp/>
+		<jar jarfile="${application}${DSTAMP}.jar"
+			basedir="."
+			includes="**/*"
+			excludes="${application}${DSTAMP}.jar, ${archive.dir}/*"
+		/>
+		<move
+		   file="${application}${DSTAMP}.jar" 
+		   todir="${archive.dir}"
+		/>
+	</target>
+	
+	
+	<!-- =========================================== -->
+	<!-- 			distribution section			 -->
+	<!-- 			====================			 -->
+	<!-- Makes the distribution zip file.			 -->
+	<!-- =========================================== -->
+	<target name="distribution"
+		description="Make a destributable zip file without source.">
+		<zip destfile="${application}.zip"
+			basedir="."
+			excludes="${application}.zip,
+			**/${test.dir}/*,
+			**/${archive.dir}/*,
+			**/${src.dir}/*,
+			**/${base.dir}/*,
+			**/${sally.dir}/*,
+			**/${svg.dir}/*,
+			**/${animation.dir}/*,
+			**/${util.dir}/*,
+			**/${wiretrace.dir}/*,
+			**/${svglink.dir}/*,
+			**/${build.dir}/*,
+			**/${build.dir}/dxf2svg/*,
+			**/${build.dir}/dxf2svg/sally/*,
+			**/${build.dir}/dxf2svg/animation/*,
+			**/${build.dir}/dxf2svg/util/*,
+			**/${build.dir}/dxf2svg/util/wiretrace/*,
+			**/${build.dir}/dxf2svg/util/svglink/*,
+			**/${build.dir}/dxf2svg/svg/*,
+			**/${doc.dir}/ToDo/*,
+			**/${doc.dir}/Internals/*"
+			includes="**/*"
+		/>
+	</target>
+
+
+
+
+	<!-- ================================================ -->
+	<!--       source distribution section                -->
+	<!--       ===========================                -->
+	<!-- Makes the distribution zip file with everything. -->
+	<!-- ================================================ -->
+	<target name="distributionwithsource"
+		description="Make a destributable zip file with source code.">
+		<antcall target="makeclean"/>
+		<antcall target="makedoc"/>
+		<antcall target="makejar"/>
+		<antcall target="makeclean"/>
+		<zip destfile="${application}.zip"
+			basedir="."
+			excludes="${application}.zip,
+			**/${test.dir}/*,
+			**/${archive.dir}/*,
+			**/${doc.dir}/ToDo/*,
+			**/${doc.dir}/Internals/*"
+			includes="**/*"
+		/>
+	</target>
+
+	
+	
+	
+	<!-- =========================================== -->
+	<!-- 				makedoc section				 -->
+	<!-- 				===============				 -->
+	<!-- Creates the documentation for application.	 -->
+	<!-- =========================================== -->
+	<target name="makedoc"
+		description="Publishes fresh documentation.">
+		<!-- <delete dir="${doc.dir}" /> -->
+		<mkdir  dir="${doc.dir}" />
+		<javadoc destdir="${doc.dir}"
+			Overview="${doc.dir}/overview/Overview.html"
+			author="true"
+			version="true"
+			use="true"
+			additionalparam="-breakiterator"
+			windowtitle="API Documentation"
+			doctitle="Dxf2Svg API Documentation"
+			bottom="Copyright &#169; 2000 - 2005 All Rights Reserved.">
+			<fileset dir="${base.dir}" casesensitive="yes">
+			  <include name="*.java"/>
+			</fileset>
+			<fileset dir="${sally.dir}" casesensitive="yes">
+			  <include name="*.java"/>
+			</fileset>
+			<fileset dir="${svg.dir}" casesensitive="yes">
+			  <include name="*.java"/>
+			</fileset>
+			<fileset dir="${animation.dir}" casesensitive="yes">
+			  <include name="*.java"/>
+			</fileset>
+			<fileset dir="${util.dir}" casesensitive="yes">
+			  <include name="*.java"/>
+			</fileset>
+			<fileset dir="${wiretrace.dir}" casesensitive="yes">
+			  <include name="*.java"/>
+			</fileset>
+			<fileset dir="${svglink.dir}" casesensitive="yes">
+			  <include name="*.java"/>
+			</fileset>
+		</javadoc>
+	</target>
+	
+	
+	
+	<!-- =========================================== -->
+	<!-- 				compile section				 -->
+	<!-- 				===============				 -->
+	<!-- Compiles the java files into the build dir. -->
+	<!-- =========================================== -->	
+	<target name="compile"
+		description="Creates a build directory and compiles the source code into it.">
+		<!-- if there isn't a build dir make one. -->
+		<mkdir dir="${build.dir}"/>
+		<!-- Create subdirectories -->
+		<!-- build the classes in the build dir. -->
+		<!-- Added deprecation attribute for compiling under new versions of Java. -->
+		<javac srcdir="${src.dir}" destdir="${build.dir}"
+			debug="false"
+			debuglevel="lines"
+			deprecation="on"/>
+	</target>
+	
+	
+	
+	<!-- =========================================== -->
+	<!-- 			makejar section					 -->
+	<!-- 			================				 -->
+	<!-- Creates a distributable jar file.			 -->
+	<!-- Is dependant on a successful compile.		 -->
+	<!-- =========================================== -->	
+	<target name="makejar" depends="compile"
+		description="Updates or creates jar from out of date source files.">
+		<!-- Jar them up and make them executable with a manifest. -->
+		<jar destfile="${application}.jar"
+			basedir="${build.dir}"
+			update="yes">
+    		<manifest>
+      			<attribute name="Main-Class" value="${main.class}"/>
+      			<attribute name="Class-Path" value="${class.path}"/>
+    		</manifest>
+    		<!-- Can we just supply a directory name to jar? -->
+			<!-- <fileset file="*.class"/> -->
+		</jar>
+	</target>
+	
+	
+	
+	<!-- =========================================== -->
+	<!-- 			makeclean section				 -->
+	<!-- 			=================				 -->
+	<!-- Deletes the build tree.					 -->
+	<!-- =========================================== -->	
+	<target name="makeclean"
+		description="Removes the build directory (and all compiled classes).">
+		<!-- delete the build tree. -->
+		<delete dir="${build.dir}"/>
+	</target>
+
+
+
+	<!-- =========================================== -->
+	<!-- 				proper section				 -->
+	<!-- 				==============				 -->
+	<!-- Deletes the build tree and application's 	 -->
+	<!-- executable jar file.					 	 -->
+	<!-- =========================================== -->	
+	<target name="makeproper"
+		description="Removes the build directory and executable jar.">
+		<!-- delete the executable jar -->
+		<antcall target="makeclean"/>
+		<delete file="${application}.jar"/>
+	</target>
+</project>

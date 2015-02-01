@@ -1,0 +1,681 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE></TITLE>
+<META NAME="Author" CONTENT="Andrew Nisbet">
+<META NAME="Keywords" CONTENT="sally">
+<META NAME="Description" CONTENT="sally dxf2svg documentation">
+<link rel="stylesheet" type="text/css" href="overview.css" />
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#FF0000" VLINK="#800000" ALINK="#FF00FF" BACKGROUND="../images/back.gif">
+<H2>Sally Documentation</H2>
+<P>
+In this document you will find information to help you write your own configuration files
+for the Dxf2Svg application.
+<H3>Introduction</H3>
+<P>
+Although SALly is technically a programming language, it is much simpler to use than
+any programming language, and requires no programming experience. Making a config file
+is just basically like making a list.
+
+<H3>How It Works</H3>
+<P>
+Dxf2Svg checks its command line for arguments that tell it what to do. If no command line
+arguments are found, then the application looks for a 'config.d2s' file in the current
+directory. It reads and parses the file and if everything looks good, it executes the 
+commands it finds in there.
+
+<H3>What You Will Need</H3>
+<P>
+To write a config.d2s file all that you require is a text editor like TextPad. I recommend
+TextPad because I have written a syntax colouring file for it that will highlight SALly key
+words, which in turn, greatly helps when trying to writing script files. The syntax file or
+<CODE>dxf2svg.syn</CODE> file can be found in the <CODE>Utility</CODE> directory, and should
+be placed in TextPad's <CODE>sample</CODE> directory.
+
+<H2>Sally Syntax</H2>
+<P>
+Sally's syntax looks like this:
+<P>
+<CODE>':' label [keyword[s]] { listItem [= valueItem [, some value]]; }</CODE>
+<P>
+Where:
+<UL>
+	<LI> <CODE>:</CODE> Is a label token.
+	<LI> <CODE><EM>label</EM></CODE> Is the list label or instruction type qualifier.
+	<LI> <CODE>keyword[s]</CODE> Optional, additional label modifiers like <CODE>head</CODE>
+	or <CODE>animateMotion</CODE>.
+	<LI> <CODE>{</CODE> Start of list token.
+	<LI> <CODE>listItem</CODE> Left-hand list item.
+	<LI> <CODE>= valueItem</CODE> Right-hand list item.
+	<LI> <CODE>,</CODE> Three item list separator token.
+	<LI> <CODE>some value</CODE> Third list item.
+	<LI> <CODE>;</CODE> End of record entry, termination token.
+	<LI> <CODE>}</CODE> End of list token.
+</UL>
+<P>
+Unknown labels and their list contents are ignored for future compatibility.
+<P>
+Sally is basically a series of one, two or three item list entries. Empty lists are illegal
+and will throw an exception. A single item list would be something like a list of configuration
+switches.
+<TABLE CELLSPACING=1 CELLPADDING=3 WIDTH="25%">
+<TR ALIGN="left" VALIGN="middle">
+	<TH>Switch</TH>
+<TR ALIGN="left" VALIGN="middle">
+	<TD> "-z" </TD>
+</TABLE>
+A two item list matches a variable with its value. Animation lists make extensive use 
+of this type of list.
+<TABLE CELLSPACING=1 CELLPADDING=3 WIDTH="25%">
+<TR ALIGN="left" VALIGN="middle">
+	<TH>Variable</TH>
+	<TH>Value</TH>
+<TR ALIGN="left" VALIGN="middle">
+	<TD>"opacity"</TD>
+	<TD> = "1" </TD>
+</TABLE>
+Three item lists are really two item lists with a third value that acts like
+a modifier. An example would be an entry in the <CODE>pen</CODE> table
+which looks like this:
+<TABLE CELLSPACING=1 CELLPADDING=3 WIDTH="25%">
+<TR ALIGN="left" VALIGN="middle">
+	<TH>Pen #</TH>
+	<TH>Colour #</TH>
+	<TH>Weight</TH>
+<TR ALIGN="left" VALIGN="middle">
+	<TD> 3 </TD>
+	<TD> = 7 </TD>
+	<TD> , 0.007 </TD>
+</TABLE>
+The third item of a two item list is always optional.
+(Incidentally, dropping the weight value causes the pen to take a default width of 0.01 inches.)
+<P>
+Using the incorrect list type will cause an exception. Here is a list of the types of lists
+and the number of items expected for each list.
+<TABLE CELLSPACING=1 CELLPADDING=3 WIDTH="35%">
+<TR ALIGN="left" VALIGN="middle">
+	<TH>List Name</TH>
+	<TH>Number of Items</TH>
+<TR ALIGN="left" VALIGN="middle">
+	<TD>files</TD>
+	<TD>1</TD>
+<TR ALIGN="left" VALIGN="middle">
+	<TD>fontMap</TD>
+	<TD>3 (third optional)</TD>
+<TR ALIGN="left" VALIGN="middle">
+	<TD>animation (all types)</TD>
+	<TD>2</TD>
+<TR ALIGN="left" VALIGN="middle">
+	<TD>layerOrder</TD>
+	<TD>1</TD>
+<TR ALIGN="left" VALIGN="middle">
+	<TD>setup</TD>
+	<TD>1</TD>
+<TR ALIGN="left" VALIGN="middle">
+	<TD>penTable</TD>
+	<TD>3 (third optional)</TD>
+<TR ALIGN="left" VALIGN="middle">
+	<TD>layerStyle</TD>
+	<TD>3 (third optional)</TD>
+<TR ALIGN="left" VALIGN="middle">
+	<TD>add</TD>
+	<TD>2</TD>
+<TR ALIGN="left" VALIGN="middle">
+	<TD>textStyle</TD>
+	<TD>2</TD
+</TABLE>
+
+<H2>Sally Reserved Words and Symbols</H2><H3>Sally Symbols</H3>
+<P>
+<UL>
+	<LI> <CODE><font size="+2">;</font></CODE> end of statement token.
+	<LI> <CODE><font size="+2">:</font></CODE> start of label token.
+	<LI> <CODE><font size="+2">,</font></CODE> second and third list item separator.
+	<LI> <CODE><font size="+2">{</font></CODE> start of list
+	<LI> <CODE><font size="+2">}</font></CODE> end of list
+	<LI> <CODE><font size="+2">=</font></CODE> associates the right hand value with the left hand variable.
+</UL>
+<P>
+If any of these characters appears on a line by itself, that is it is the sole character in a 
+<CODE>javaScript</CODE> command, the parser will throw an exception. 
+A work around is to place a whitespace character either before or after the symbol.
+<P>
+<H3>Sally Key Words</H3>
+<P>
+Below is a list of 'labels' and label modifiers. 
+<P>
+<UL>
+	<LI> <CODE>files</CODE> list of files (not directories, see '-f' in setup for more information).
+	See <A HREF="#files">example</A>.
+	<LI> <CODE>fontMap</CODE> list of mapped fonts and scaling requirements.
+	See <A HREF="#fontmap">example</A>.
+	<LI> <CODE>animation</CODE> list of key value pairs that represent an animation object.
+	See <A HREF="#animation">example</A>
+	<LI> <CODE>layerOrder</CODE> controls layer ordering.
+	See <A HREF="#layerorder">example</A>
+	<LI> <CODE>setup</CODE> sets switches that control the conversion process.
+	<LI> <CODE>tail</CODE> (modifier)	controls the draw order of the following layers (these 
+	layers are drawn last).
+	<LI> <CODE>head</CODE> (modifier) similar function to tail, but these layers are drawn first.
+	<LI> <CODE>penTable</CODE> list of pens, their colour and line weight.
+	See <A HREF="#pentable">example</A>
+	<LI> <CODE>layerStyle</CODE> list of layer names, the pens they use and the colour of any fill.
+	See <A HREF="#layerstyle">example</A>. Note: the default fill for object that takes a fill
+	(solids, some hatches) is a light grey for objects controlled by <CODE>TableLayer</CODE> and a light pink colour for objects controlled by <CODE>TableLayer</CODE> that have been modified by a <CODE>CustomLayerStyle</CODE>.
+	<LI> <CODE>textStyle</CODE> Allows the user to identify absolute values and text sizes for
+	specific styles that could be encountered in a DXF. <I>textStyle</I> is a two item list where
+	the first value is the case insensitive name of the style; the second is the description of
+	the style in <A HREF="http://www.htmlhelp.com/reference/css/font/">CSS</A> format <A HREF="http://www.w3.org/TR/SVG11/fonts.html">(see here for more information)</A>. Please note 
+	that you should specify the style like so:
+	<UL>
+		<LI> font-size:3.77; -- or --
+		<LI> font-size:3.77px;
+	</UL>	
+	If you don't, default sizes will be used for all text that matches that style's defined size, however scaled text will appear normally. See <A HREF="#textstyle">example</A>.<font color="red">These styles over ride fontMap settings</font>.
+	<LI> <CODE>javaScript</CODE> List of strings of JavaScript to be included in the &lt;script&gt; tags.
+	See <A HREF="#javascript">example</A>. <CODE>javaScript</CODE> assumes that the associated 
+	string is a line of a function to be included
+	into the SVG file inside &lt;SCRIPT&gt; tags.
+	<P>
+	The functions required to switch from English
+	to French are automatically included if <B>FRENCH</B> and <B>ENGLISH</B> layers exist. They
+	do not need to be included using this keyword. If HTML wrappers are required (which is the
+	default; see '<CODE>-xh</CODE>' switch for more details) a french and English HTML wrapper
+	page is generated for all graphics. This also includes bilingual pages. The reason for this
+	is a historical limitation of IETM generating scripts supplied from XIA. This behaviour can
+	be changed with a small change to line 416 and 421 of SvgBuilder.writeSvgObjectsToFile() source code.
+
+	<LI> <CODE>gang</CODE> searches for polyline objects on a specific layer and assumes that
+	any element that matches that SVG class &lt;path&gt; or &lt;polyline&gt; are wire gangs.
+	This functionality is related to <CODE>collaborate</CODE> but their behaviour is subtly
+	different. If you use <CODE>collaborate</CODE> on a layer with discreet elements, those that share the same
+	start and end point are grouped together and animation is applied to the group. When you use 
+	<CODE>gang</CODE> the conversion looks for polyline objects and assumes that they are ganged wires
+	even if they share the same start and end point.
+	<P>
+	What happens if you use both keywords for the same layer?
+	<P>
+	The conversion first looks for the ganged polylines and applies the animation to each polyline 
+	individually then it looks for descrete elements that share the start and end point and groups
+	them together and applies animaition to that group. The polylines from the first pass are removed
+	from the potential matches for start and end searches in the second pass.
+	See <A HREF="#gang">example</A></P>
+	<DIV CLASS="added"><font color="red">Note: individual wires on layer 'wire' or layer 'gang' will automatically be given an id of </DIV>'wire_run'.<DIV CLASS="added"></font> Wire runs are found and grouped individually into a &lt;g&gt; element that doesn't exist until the file is converted. This means that the group could not possibly have an id from the DXF so one is automatically provided.</DIV>
+	</UL>
+	<UL>
+	<H4>Special Key Words For Modifying Attributes.</H4>
+	<LI> <CODE>add</CODE> adds an attribute to an element (like &lt;text&gt;) with optional
+	localization to a specific class of element (or layer or ID) (see <A HREF="#onlayer">onlayer</A>).
+	See <A HREF="#add">example</A>
+	<LI> <CODE>change</CODE> <font color="red">(not implemented yet)</font> changes an attribute of a class of element with optional
+	localization to a specific class of element (or layer or ID), however you can't yet change inate
+	attributes like 'stroke'. Not yet implemented.
+	See <A HREF="#change">example</A>
+	<LI> <CODE>delete</CODE> <font color="red">(not implemented yet)</font> deletes an attribute from a class of element with optional
+	localization to a specific class of element (or layer or ID) You can only delete attributes
+	that were added with the add keyword to date. This may change in the future. Not yet implemented.
+	See <A HREF="#delete">example</A>
+	<LI> <A NAME="onlayer"><CODE>onlayer</CODE></A> Restricts searches to specific layers or 
+	element classes. These two terms are used interchangeably here.
+	<LI> <CODE>withid</CODE> Restricts searches to objects with specific IDs. The ID of typical
+	SvgElements is its AutoCAD 'handle' (group code 5 in DXF). For special cases like ENTITIES
+	which are blocks from the DXF file, the ID is the name of the block. Layers will have IDs 
+	that are the name of the layer they came from in the DXF with the characters 'st' as a 
+	prefix. So if something comes from layer 'layer1' in the SVG the ID of that layer will be
+	'stlayer1'.
+	<LI> <CODE>implied</CODE> If, and only if the value of an attribute is a javascript function
+	call, and if any of the arguments is '<CODE>implied</CODE>', the word implied shall be replaced
+	with the content of the enclosed element which is usually the SvgText element. This content
+	can be optionally formatted as well (See EventAttributeModifier Object documentation).
+</UL>
+<P>
+<H4>Animation Key Words</H4>
+<P>
+<UL>
+	<LI> <CODE>set</CODE> (modifier) type of animation (set attribute).
+	<LI> <CODE>animate</CODE> (modifier) animate an attribute.
+	<LI> <CODE>animateColo<em>u</em>r</CODE> (modifier) animate an object's colour.
+	<LI> <CODE>animateMotion</CODE> (modifier) make an object move.
+	<LI> <CODE>animateTransform</CODE> (modifier) transform an object.
+	<LI> <CODE>collaborate</CODE> (switch) interpret discrete objects as continuous lines.
+	See also command line switch -collaborate. They do the same thing. If you add collaborate
+	the contents of the layers are connected together to form a single polyline for animation
+	or what-have-you and each resulting element has this animation applied. With out it the
+	animation is just applied to the layer as a whole.
+</UL>
+<P>
+Sally is a case sensitive language. That means that '-z' is different from '-Z'. All key words are
+case sensitive. The case
+sensitivity has no effect on file names 'file.txt' is the same as 'FiLe.Txt' on Windows, however
+the two would be considered different if you running conversions on a Un*x system.
+<P>
+If you are using TextPad with syntax highlighting, the keywords will appear in colour to 
+let you know that they are spelled correctly. If you do not have such luxuries, remember the
+following rule about naming conventions:
+<P>
+<UL>
+	<LI> All key words resemble Java (SVG, EMCA, JavaScript, etc.) naming conventions. So 
+	use lower case except for the first letter of the second word. Do not use spaces to
+	separate key words. Here is an example: the key word for setting conversion switches is
+	<code>setup</code>. A compound keyword would look like this '<code>animateTransform</code>'.
+	<LI> If in doubt, use the British spelling of words 'animateColour' not 'animateColor'.
+	<LI> Sally uses C++ comment styles that means<BR>'/* comment */' for multi line comments or 
+	<BR>// comment <BR>
+	for single line comments.
+</UL>
+<P>
+Basically you create a list of expressions you would like executed. The list is enclosed
+in a set of curly braces ('{' and '}') and, is in turn, preceded by a keyword or words and a colon.
+<P>
+All entries on a list must end
+with a semi-colon ';'. There may or need not be space between the keywords and punctuation 
+depending on you coding style. I prefer the 'C' style myself.
+<P>
+<A NAME="#files">Example: To create a list of files to process use -</A>
+<PRE>
+:files {</PRE><PRE class="indent">
+"c:/tmp/file1.dxf";  // This one runs the conversion in the c:\tmp directory; note the slash direction.
+"file2.dxf";         // This file is converted in the current directory.
+</PRE><PRE>}</PRE>
+<P><B><EM>Note:</EM></B>The files section is for files only. If you require a directory
+to be converted consider using the '-f' and a quoted directory name in the setup section
+instead.
+<P>
+<A NAME="#fontmap">Here is another example of a fontmap list:</A>
+<PRE>
+:fontMap {</PRE><PRE class="indent">
+uvb.shx = cour.ttf, 0.8;   // uvb maps to courier at 80% size.
+simplex.shx = switzn.ttf;  // replace simplex with Switzerland no scaling.
+</PRE><PRE>}</PRE>
+<P>
+<A NAME="#layerorder">Example: Create a list or preferred layer ordering.</A> In this sample, if such layers
+exist in the dxf file, they will be placed in this order with the french layer 
+appearing last of all. This is critical if you want halos to be placed below arlines
+or text and other objects.
+<PRE>
+:layerOrder tail{</PRE><PRE class="indent">
+"halo";
+"arline";
+"english";	
+"french";
+</PRE><PRE>}</PRE>
+
+<P>
+<A NAME="#add">Example: How to add an attribute or content to an element.</A>
+Here we add a JavaScript event function to a mouseover attribute text objects on layer 'french'.
+<PRE>
+:add "text" onlayer "french" { </PRE><PRE class="indent">
+"onmouseover" = "someFunc(arg)";</PRE>
+<PRE>}</PRE>
+<P>
+Example: Here we add a JavaScript event function to a mouseover attribute text objects on layer 'french'.
+with an ID of '1F' <EM>case sensitive</EM>.
+<PRE>
+:add "text" onlayer "french" withid "1F" { </PRE><PRE class="indent">
+"onmouseover" = "someFunc(arg1, arg2)";</PRE>
+<PRE>}</PRE>
+<P>
+Example: Here we add an attribute to the object with an ID of 'BAB' <EM>case sensitive</EM>. <B>Note:</B> It
+is not necessary for the ID attribute to be included on the element for this to work.
+<PRE>
+:add withid "BAB" { </PRE><PRE class="indent">
+"onclick" = "alert('This elements handle is BAB')";</PRE>
+<PRE>}</PRE>
+<P>
+Example: Again add a JavaScript event function to a mouseover attribute but this time
+we add it to all text elements.
+<PRE>
+:add "text" { </PRE><PRE class="indent">
+"onmouseover" = "someFunc(9, true)";</PRE>
+<PRE>}</PRE>
+<P>
+Example: This adds a JavaScript event function to a mouseover attribute but this time
+to a specific element with the id of '7E' <EM>case sensitive</EM>.
+<PRE>
+:add withid "7E" { </PRE><PRE class="indent">
+"onmouseover" = "someFunc(arg1, arg2)";</PRE>
+<PRE>}</PRE>
+<P>
+Example: This adds a JavaScript event function to a mouseover attribute but this time
+to the &lt;g&gt; that represents the layer 't' <EM>case insensitive</EM>.
+<PRE>
+:add onlayer "t" { </PRE><PRE class="indent">
+"onmouseover" = "someFunc(arg1, arg2, arg3)";</PRE>
+<PRE>}</PRE>
+<P>
+Example: This adds the attribute and value to EVERY ELEMENT.
+<PRE>
+:add "null" { </PRE><PRE class="indent">
+"xml:ns" = "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd";</PRE>
+<PRE>}</PRE>
+<P>
+or...
+<PRE>
+:add "*" { </PRE><PRE class="indent">
+"onclick" = "alert('you clicked an element!')";</PRE>
+<PRE>}</PRE>
+<P>
+Example: This adds the attribute and value to EVERY LAYER.
+<PRE>
+:add onlayer "*" { </PRE><PRE class="indent">
+"onclick" = "alert('you clicked a layer!')";</PRE>
+<PRE>}</PRE>
+<P>
+Example: This adds the attribute and value to the root or &lt;SVG&gt; element. Any additional attribute target definitions (like <CODE>withid</CODE> or <CODE>onlayer</CODE>) will be ignored.
+<PRE>
+:add svg { </PRE><PRE class="indent">
+"xmlns" = "http://www.w3.org/2000/svg";</PRE>
+<PRE>}</PRE>
+<P>
+or ...
+<PRE>
+:add root { </PRE><PRE class="indent">
+"xmlns:xlink" = "http://www.w3.org/1999/xlink";</PRE>
+<PRE>}</PRE>
+<P>
+<B>Note:</B> in the context of <A HREF="SparSpecificConversionInfo.html#wirerun">converting Spar illustrations</A>, wire runs are given ids of 'wire_run'. If you wish to apply some JavaScript
+via the <CODE>config.d2s</CODE> they can be identified by this id or as a path element on the layer from which they originate (usually 'wire', but you milage may vary).
+
+
+<P>
+<A NAME="#animation">Example: Create a set of animation objects.</A> In this case anything drawn on layer1 will,
+be invisible when the drawing is loaded and gradually fade-in over the course of 3 seconds.
+The effect will be frozen until the image is reloaded. 
+<PRE>
+:animation set "layer1" { </PRE><PRE class="indent">
+attributeName = "opacity";
+from	= 0;
+to	= 1;
+dur	= "3s";
+fill	= freeze;
+</PRE><PRE>}</PRE>
+<PRE>
+/* This animation will, when the mouse rolls over an object on the layer 'wires',
+*  turn their stroke to red for the duration of 3 seconds. The collaborate switch
+*  says that the AnimationEngine should make intelligent decisions about whether 
+*  objects are related to one-another.
+*/
+:animation animateColour "wires"{</PRE><PRE class="indent">
+collaborate	= "true";  // Searches for all line segments that are part of the same wire run.
+attributeName	= "stroke";
+begin	= "mouseOver";
+to	= red;
+dur	= "3s";
+</PRE><PRE>}</PRE>
+<P>
+<H3>More On the Key Word 'collaborate'</H3>
+<P>
+The 'collaborate' key word instructs Dxf2Svg to look for patterns and make intelligent decisions
+about what makes up a compound object and then apply animation to that object. In this way
+things like wire runs can be detected and animated as required.
+<P>
+<A NAME="#gang">Example: How to identify a layer as having ganged wires.</A>
+<PRE>
+/* This animation will, when the mouse rolls over an object on the layer 'wires',
+*  turn their stroke to red for the duration of 3 seconds. The gang switch
+*  says that the AnimationEngine should make intelligent decisions about the 
+*  polylines on this layer as they are assumed to be ganged wires.
+*/
+:animation animateColour "wire_gangs"{</PRE><PRE class="indent">
+gang	= "true";  // Searches for all polyline segments and apply animation to each.
+attributeName	= "stroke";
+begin	= "mouseOver";
+to	= red;
+dur	= "3s";
+</PRE><PRE>}</PRE>
+<P>
+<H3>Table of Animation Attributes</H3>
+<P>
+Here is a complete list of animation attributes.
+
+<P>
+<TABLE CELLSPACING=1 CELLPADDING=3 WIDTH="75%">
+<TR ALIGN="middle" VALIGN="middle">
+	<TH>Attribute</TH>
+	<TH>Set</TH>
+	<TH>Animate</TH>
+	<TH>Animate Motion</TH>
+	<TH>Animate Colour</TH>
+	<TH class="longRow">Animate Transform</TH>
+<TR ALIGN="middle" VALIGN="middle">
+	<TD class="longRow" ALIGN="left">attributeName</TD>
+	<TD class="longRow"> R </TD>
+	<TD class="longRow"> R </TD>
+	<TD class="longRow">&nbsp;</TD>
+	<TD class="longRow"> R </TD>
+	<TD class="longRow">&nbsp;</TD>
+<TR ALIGN="middle" VALIGN="middle">
+	<TD class="longRow" ALIGN="left">attributeType</TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow">&nbsp;</TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> &nbsp; </TD>
+<TR ALIGN="middle" VALIGN="middle">
+	<TD class="longRow" ALIGN="left">to</TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> &nbsp; </TD>
+<TR ALIGN="middle" VALIGN="middle">
+	<TD class="longRow" ALIGN="left">begin</TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+<TR ALIGN="middle" VALIGN="middle">
+	<TD class="longRow" ALIGN="left">dur</TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+<TR ALIGN="middle" VALIGN="middle">
+	<TD class="longRow" ALIGN="left">end</TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+<TR ALIGN="middle" VALIGN="middle">
+	<TD class="longRow" ALIGN="left">restart</TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+<TR ALIGN="middle" VALIGN="middle">
+	<TD class="longRow" ALIGN="left">repeatCount</TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+<TR ALIGN="middle" VALIGN="middle">
+	<TD class="longRow" ALIGN="left">repeatDur</TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+<TR ALIGN="middle" VALIGN="middle">
+	<TD class="longRow" ALIGN="left">fill</TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+<TR ALIGN="middle" VALIGN="middle">
+	<TD class="longRow" ALIGN="left">additive</TD>
+	<TD class="longRow">&nbsp;</TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+<TR ALIGN="middle" VALIGN="middle">
+	<TD class="longRow" ALIGN="left">accumulate</TD>
+	<TD class="longRow">&nbsp;</TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+<TR ALIGN="middle" VALIGN="middle">
+	<TD class="longRow" ALIGN="left">from</TD>
+	<TD class="longRow"> &nbsp; </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> &nbsp; </TD>
+<TR ALIGN="middle" VALIGN="middle">
+	<TD class="longRow" ALIGN="left">by</TD>
+	<TD class="longRow"> &nbsp; </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> &nbsp; </TD>
+<TR ALIGN="middle" VALIGN="middle">
+	<TD class="longRow" ALIGN="left">calcMode</TD>
+	<TD class="longRow"> &nbsp; </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> &nbsp; </TD>
+<TR ALIGN="middle" VALIGN="middle">
+	<TD class="longRow" ALIGN="left">values</TD>
+	<TD class="longRow"> &nbsp; </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> &nbsp; </TD>
+<TR ALIGN="middle" VALIGN="middle">
+	<TD class="longRow" ALIGN="left">keyTimes</TD>
+	<TD class="longRow"> &nbsp; </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> &nbsp; </TD>
+<TR ALIGN="middle" VALIGN="middle">
+	<TD class="longRow" ALIGN="left">keySplines</TD>
+	<TD class="longRow"> &nbsp; </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> &nbsp; </TD>
+<TR ALIGN="middle" VALIGN="middle">
+	<TD class="longRow" ALIGN="left">path</TD>
+	<TD class="longRow"> &nbsp; </TD>
+	<TD class="longRow"> &nbsp; </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> &nbsp; </TD>
+	<TD class="longRow"> &nbsp; </TD>
+<TR ALIGN="middle" VALIGN="middle">
+	<TD class="longRow" ALIGN="left">origin</TD>
+	<TD class="longRow"> &nbsp; </TD>
+	<TD class="longRow"> &nbsp; </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> &nbsp; </TD>
+	<TD class="longRow"> &nbsp; </TD>
+<TR ALIGN="middle" VALIGN="middle">
+	<TD class="longRow" ALIGN="left">Empty Element</TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> &nbsp; </TD>
+	<TD class="longRow"> * </TD>
+	<TD class="longRow"> &nbsp; </TD>
+</TABLE>
+
+<P>
+where '<B>R</B>' stands for <B>Required</B>. If you fail to include this attribute SvgAnimator
+with throw an exception and your conversion will stop. '<B>*</B>' means the attribute is optional.
+No star means that the attribute should not be applied to that type of animation. Unsupported 
+attribute animation requests are ignored and a warning is issued.
+<P>
+<A NAME="#pentable">Here are some sample penTable and layerStyle scripts:</A>
+<PRE>
+// Standard pen weights for Spar CC-130
+:penTable{</PRE><PRE class="indent">//Pen# = Colour, LineWeight
+1 = 7, 0.015;
+2 = 7, 0.013;
+3 = 7, 0.007;
+4 = 7, 0.020;
+5 = 7, 0.008;
+6 = 7, 0.003;
+7 = 7, 0.007;
+8 = 255, 0.003;
+9 = 7, 0.008;
+10 = 7, 0.007;
+11 = 7, 0.015;
+12 = 7, 0.007;
+13 = 7, 0.013;
+14 = 7, 0.027;</PRE><PRE>
+}</PRE>
+<P>
+<A NAME="#layerstyle">Layer styling example:</A>
+<PRE>
+/* This script will make layer "halo" take pen 8 and a fill of 255 (white).
+*  arline will take pen 3 etc.
+*/
+:layerStyle {</PRE>
+<PRE class="indent">
+//Layer = Pen, Fill 
+"halo" = 8, 255;
+"arline" = 3;
+"3"	= 1;
+"1"	= 2;
+"t"	= 3, 7;
+</PRE><PRE>}</PRE>
+<P>
+
+<A NAME="#textstyle">Text styling example:</A>
+<PRE>
+/* This code block will force text with these predefined styles to render at exactly the
+*  same size as listed.
+*/
+:textStyle {</PRE>
+<PRE class="indent">
+//Style name = Style description 
+"6pte"    = "font-family:'Switzerland';stroke:none;font-size:3.77;";
+"6ptbold" = "font-family:'Switzerland Bold';stroke:none;font-size:3.77;";
+"8pte"    = "font-family:'Switzerland';stroke:none;font-size:5.15;";
+"8ptbold" = "font-family:'Switzerland Bold';stroke:none;font-size:5.15;";
+"10pte"   = "font-family:'Switzerland';stroke:none;font-size:6.59;";
+"10ptbold"= "font-family:'Switzerland Bold';stroke:none;font-size:6.59;";
+"12pte"   = "font-family:'Switzerland';stroke:none;font-size:7.83;";
+"12ptbold"= "font-family:'Switzerland Bold';stroke:none;font-size:7.83;";
+"standard"= "font-family:'Switzerland';stroke:none;font-size:3.55;";
+</PRE><PRE>}</PRE>
+
+
+<P>
+<A NAME="#javascript">Example of JavaScript list:</A>
+<PRE>
+/* All the lines in this list are treated like lines in a javaScript function.
+*  You must be careful to use single quotes to quote values in your functions
+*  as double quotes will be interpreted by the config.d2s parser.
+*/
+:javaScript {</PRE>
+<PRE class="indent">
+"// Here is a JavaScript comment that has to go into the file. ";
+"/* This is another. Incidentally, the '\t' chars make things easier to read. */";
+"var isEnglish = true;";
+"function init() {";
+"\tparent.changeLanguage = svgChangeLanguage;";
+"\tenglishLayer.setAttribute('visibility', "visible');";
+"\tfrenchLayer.setAttribute('visibility', 'hidden');";
+"\tisEnglish = true;";
+"}";
+</PRE><PRE>}</PRE>
+<P>
+<H3>Note the use of quotes</H3> 
+<P>
+The configuration file parser recognizes double quotes ( " )
+as string delimiters. To avoid the inevitable problem of quoting values within your JavaScript,
+use single quotes ( ' ) to quote values. This will be parsed correctly as part of a script
+and will work in the final JavaScript output and will not cause the config parser to misinterpret
+the double quote as the end of one string or the start of the next.
+
+</BODY></HTML>

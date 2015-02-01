@@ -1,0 +1,71 @@
+This is what you need to do if you want to rotate objects into 
+their correct positions.
+
+1) SVG space's origin (point 0,0 or 0,0s from here on in) is 
+located in the top lefthand corner of the 'page'. Dxf's
+origin is located in the bottom left hand corner. There are
+classes to help convert between the two space coordinate
+systems: Point and SvgUtil.
+
+2) Blocks, in SVG, are handled in a similar manner to DXF blocks.
+They are declared as entities. Inside the entity the elements 
+are declare with the same coordinates as they were declared with
+in the DXF file. That is to say that if you draw a line in AutoCAD
+from 1,1 to 1,2 you would have a straight vertical line starting 
+from 1,1 Dxf (or 1,1d), to a point exactly one unit
+above. If you now state that the insertion point 
+of that block is 0,0d, then the entity can be declared by the 
+following syntax:
+
+	<!ENTITY some-line '<line x1="1" y1="1" x2="1" y2="2"/> '>
+	
+To reference that entity into its correct location in the SVG,
+we will first need an entity reference. To do that we use a <g>
+element with the translation attribute to locate it at the 
+correct x and y coordinates.
+
+Let us now suppose that we place the block at a new coordinate of 10,10d.
+The effect would be to draw a line from 11,11d to 11,12d. All is 
+well and good except, translating the point 10,10d from DXF to SVG would
+place the point in the wrong location; here's why:
+
+When we tranlate from DXF space to SVG space we have to invert the 
+coordinate system. To do that we must know where the top of the DXF file
+is so we can locate our SVG 0,0s origin there. To do that we use the limits
+of the drawing.
+
+If the drawing is 12 units high and 12 units wide in DXF,  
+and another arbitrary drawing object is located at 10,10d then the
+calculation to convert to SVG space is:
+
+	x = 10d = 10s
+	y = 12d - 10d = 2s
+	
+Since the x values in DXF can be matched without convertion to SVG 
+the end result is the anchor for this object should be located at
+x = 10 and y = 2 or 10,2s the object would appear at the correct location. 
+This, however, is incorrect for inserts. If you were to use this value for the insert
+the line would be drawn off the top of the page. What is going on here.
+
+What is going on is that blocks obey the DXF coordinate system, while
+our un-suspecting converter has erroneously tried to convert it into 
+an SVG coordinate system. I refer to this as a 'Virtual DXF Coordinate' (VDC).
+
+What happens is the base point or block's insert point, is 
+located in the bottom lefthand corner of the block. If you do a staight
+translation to SVG space that point is located in exactly the same spot
+but it is now the top righthand corner of the block. Moving it back to
+the bottom of the block is called returning a block to its VDC.
+
+The methods that do this are located in SvgUtil.java. Once you have 
+collected the x and y value for the anchor you can also create the
+VDC with the same data using these methods. Once that is done you
+'transform' (rotate etc.) with respect to the anchor which is the 
+block's insert point converted to SVG space and then transform the
+group to the VDC.
+
+The reference for the above block looks like 
+
+	<g transform="rotate(anchor) translate(VDC)">&some-line;</g>
+
+QED

@@ -1,0 +1,260 @@
+// Master 'd2s' file
+/****************************************************************************************************
+** file version 1.0 - Changed line weights to 25% of Spars standards to display better detail.     **
+** 		1.1 - Added 'hyell' to layerOrder and added '-r' switch.                                   **
+**		1.2 - Added scaling of Switzerland fonts and layerOrder for English and French.            **
+**		1.3 - Changed the animation to a swipe to turn on and a click to turn off.                 **
+**		2.0 - Added tons of JS and :add plus new layers for notes and note processing.             **
+**		2.5 - Added Include instructions for menu.svg.                                             **
+**		2.6 - Made correction to JavaScript 'note' 'englishNote'.                                  **
+**             	2.7 - '-db' dir set to K:/data/XMLTransform/SVGTransform                           **
+**		2.8 - Centralized conversion process                                                       **
+**		2.9 - Added layer '6' to tail command to render borders over raster images.                **
+**		2.91- Added sectarr below halo in layerorder tail.                                         **
+**		2.92- Added '-use_dxf_object_colour' so the special colour requests by objects
+**		are ignored and defaults to the layers colour. The '-c' coerces all colours 
+**		that are NOT         **
+**            represented in the colour table below to black. '-c' flag not necessary.             **
+**		2.93- Commented out the include for print perps.                                           **
+**		3.00- Added new keyword of textStyle. See documentation for more details.
+**		3.01- Changed layer '4' from pen 18 to pen 1 with a fill of 7. (Andrew)
+**		3.02- Added HBLUE to pen table and tail section. (Andrew)
+**		3.03- Added HMAG to layerStyle.
+**		3.04- Added a reference for CAEStd.shx in the fontMap section February 10, 2005.
+**		4.0 - Changed the organization for context menu wire highlighting and new JS.
+**		5.0 - New Production release includes remote graphic.js file.
+**
+***********************************************************************************************/
+:setup
+{
+	"-IETM";	
+	"-notes";
+	"-js";
+	"../../../common/graphic.js"; 
+	//"graphic.js";
+	"-r";
+	"-suppress_default_js";
+	"-collaborate ";
+	"wire";
+	"-z";
+	"-MY";
+	"onclick";
+	"showPart(implied)";
+}
+
+
+:fontMap
+{
+	simplex.shx  = switzn.ttf, 1.6;
+	txt          = txt_____.ttf;			// There are times where the font file name is 'txt'.
+	txt.shx	     = txt_____.ttf;
+	uv	     = switzn.ttf, 1.13;
+	uv.shx       = switzn.ttf, 1.13;
+	uvb.shx	     = switzb.ttf, 1.0;
+	uvb          = switzb.ttf, 1.0;
+	UVB          = switzb.ttf;
+	switzb.ttf   = switzb.ttf, 1.075;		// Scale by 7.5%
+	switzn.ttf   = switzn.ttf, 1.09;		// Switerland needs to be scaled up by 9%.
+	caestd.shx   = switzn.ttf;
+}
+
+// Changes the draw order of elements so halos don't get written over arlines.
+// These layers (if they exist) are output last.
+:layerOrder tail {
+	"wire";
+	"gang";
+	"0";
+	"7";
+	"6";		// Makes the cyan lines appear over the raster images.
+	"halo";
+	"sectarr";
+	"arline";
+	"hblue";
+	"hred";
+	"hwhite";
+	"hyellow";
+	"hyell";	// This layer is called this in some older drawings.
+	"hmag";
+	"spot_call";
+	"dim";		// Some illustrators have used this when it should be hred or hwhite.
+	"english";
+	"french";	// Notes english gets converted to english and NOTESFRE converts to french.
+	"t";
+	"border";
+}
+
+// improved line weights for zooming.
+:penTable{
+//pen number 	colour	weight
+	1 =	7,	0.010;
+	2		=	7,		0.009;
+	3		=	7,		0.004;
+	4		=	7,		0.014;
+	5		=	7,		0.005;
+	6		=	7,		0.001;
+	7		=	7,		0.004;
+	8		=	255,	0.003; // untouched
+	9		=	7,		0.005;
+	10		=	7,		0.004;
+	11		=	7,		0.010;
+	12		=	7,		0.004;
+	13		=	7,		0.009;
+	14		=	7,		0.019;
+	// Setting the value of the pen, flags it as custom, and exempts it
+	// from coersion. They all take the default pen weight.
+	21		= 	21;
+	23		= 	23;
+	30		= 	30;
+	31		= 	31;
+	33		= 	33;
+	40		= 	40;
+	41		= 	41;
+	42		= 	42;
+	50		=	50;
+	51		= 	51;
+	61		= 	61;
+	71		= 	71;
+	80		= 	80;
+	81  		= 	81;
+	92		= 	92;
+	110		= 	110;
+	123		= 	123;
+	130		= 	130;
+	131		= 	131;
+	140		= 	140;
+	141		= 	141;
+	150		= 	150;
+	151		=	151;
+	183		= 	183;
+	200		= 	200;
+	202		= 	202;
+	204		= 	204;
+	210		= 	210;
+	231		= 	231;
+	240		= 	240;
+	241		= 	241;
+	242		= 	242;
+	252		= 	252;
+	253		= 	253;
+	254		= 	254;
+}
+
+// If pens are not defined the standard pen is used.
+// Standard pen means colour of the pen's number and 0.01 inch width.
+:layerStyle {
+	//layer		pen	fill colour
+	"halo" 		= 8, 	255;
+	"arline"	= 3,	7;
+	"3"		= 1,	7;
+	"1"		= 2,	7;
+	"t"		= 3,	7;
+	"notenums"	= 3,	7;
+	"6"		= 4,	7;
+	"hblue"		= 4,	7;
+	"10"		= 6,	7;
+	"7"		= 7,	7;
+	"8"		= 1;
+	"25"		= 1;	// Engineering layer
+	"19"		= 4;	// Engineering layer
+	"20"		= 1;	// Engineering layer
+	"57"		= 7;	// Engineering layer
+	"dim"		= 10,   7;
+	"hred"		= 11,	7;
+	"hwhite"	= 12,	7;
+	"hyellow"	= 13,	7;
+	"hyell"		= 13,	7;
+	"hyel"		= 13,	7;
+	"hmag"		= 10,   7;
+	"border"	= 14,   7;
+	"spot_call"	= 7,	7;
+	"plotborder"	= 14,   7;
+	"english"	= 7,	7;
+	"french"	= 7,	7;
+	"2"		= 17,   7;
+	"4"		= 1,    7;
+	"wire"		= 1,    7;
+	"gang"      	= 1,    7;
+	"shield"    	= 1,    7;
+	"sectarr"	= 4,	7; 
+	"t1"		= 2;
+	// From here down are the colour layers. Most are used very infrequently.
+	"cc"		= 130,130;
+	"cdg"   	= 92, 92;
+	"cr5"		= 21, 21;
+	"cbr"		= 23, 23;
+	"co"		= 30, 30;
+	"cr6"		= 31, 31;
+	"cr7"		= 33, 33;
+	"cy3"		= 40, 40;
+	"cy2"		= 41, 41;
+	"co2"		= 42, 42;
+	"cy"		= 50, 50;
+	"clg2"		= 61, 61;
+	"clg"		= 71, 71;
+	"cdg2"		= 80, 80;
+	"cdg"		= 92, 92;
+	"cbk"		= 110, 110;
+	"cbl7"		= 123, 123;
+	"cbl2"		= 130, 130;
+	"cy4"		= 131, 131;
+	"cbl3"		= 140, 140;
+	"cbl5"		= 141, 141;
+	"cbl4"		= 151, 151;
+	"cbl"		= 183, 183;
+	"cv"		= 200, 200;
+	"cv3"		= 202, 202;
+	"cv2"		= 204, 204;
+	"cm"		= 210, 210;
+	"cr4"		= 231, 231;
+	"cr"		= 240, 240;
+	"cr2"		= 241, 241;
+	"cr3"		= 242, 242;
+	"cbl8"		= 252, 252;
+	"cbl9"		= 253, 253;
+	"cbl6"		= 254, 254;
+	"cw"		= 255, 255;
+	"0"		= 1,	7;
+}
+
+:textStyle
+{
+	"6pte"       = "font-family:'Switzerland';stroke:none;font-size:3.77;";
+	"6ptbold"    = "font-family:'Switzerland Bold';stroke:none;font-size:3.77;";
+	"8pte"       = "font-family:'Switzerland';stroke:none;font-size:5.15;";
+	"8ptbold"    = "font-family:'Switzerland Bold';stroke:none;font-size:5.15;";
+	"10pte"      = "font-family:'Switzerland';stroke:none;font-size:6.59;";
+	"10ptbold"   = "font-family:'Switzerland Bold';stroke:none;font-size:6.59;";
+	"12pte"      = "font-family:'Switzerland';stroke:none;font-size:7.83;";
+	"12ptbold"   = "font-family:'Switzerland Bold';stroke:none;font-size:7.83;";
+	"standard"   = "font-family:'Switzerland';stroke:none;font-size:3.55;";
+	"wiretext"   = "font-family:'Switzerland';stroke:none;font-size:3.77;";
+}
+
+:add svg { 
+	"xmlns" 	= "http://www.w3.org/2000/svg";
+	"xmlns:xlink" 	= "http://www.w3.org/1999/xlink";
+	"onload"	= "init()";
+}
+
+:add onlayer "gang" { 
+	"onclick" 	= "clickOn(evt)";
+	"onmousedown"	= "changeMenu(evt)";
+	"onmouseover"	= "flashOn(evt)";
+	"onmouseout"	= "flashOff(evt)";
+}
+
+:add onlayer "wire" { 
+	"onclick" 	= "clickOn(evt)";
+	"onmousedown"	= "changeMenu(evt)";
+	"onmouseover"	= "flashOn(evt)";
+	"onmouseout"	= "flashOff(evt)";
+}
+
+:add "text" onlayer "notenums" {
+	"onmouseover"   = "showNote(evt, implied)";
+}
+
+
+:javaScript
+{"function init(){try{initialize();}catch(err){alert('IETM JavaScript path is incorrect. The SVG may not\\nrender correctly and no functionality is available.\\nIn addition you will see runtime errors continuously.\\n\\nContact Spar Aerospace for assistance.');}}";	
+}

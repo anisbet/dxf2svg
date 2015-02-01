@@ -1,0 +1,124 @@
+The SAL Grammar:
+================
+
+Label:
+	':' list_type file_list
+	|	layer_order_list
+	|	fontmap_list
+	|	setup_list
+	|	animation_instructions
+	;
+
+setup_list:	instruction_list
+	;
+	
+list_type:	STRING
+	;
+	
+file_list:	 /* EMPTY */
+	|	'{' STRING ';' [STRING ...] '}'
+	;
+	
+layer_order_list: "tail"
+	|	"head" file_list
+	;
+
+fontmap_list:  /* EMPTY */
+	|	'{' STRING '=' STRING [',' STRING] ';' [repeated ...] '}'	
+	;
+	
+animation_instructions:	animation_type animation_target instruction_list [repeated ...]
+	;
+
+animation_target:STRING
+	;
+	
+animation_type:	STRING //"set" "animate" "animateColour" "animateMotion" "animateTransform"
+	;
+	
+instruction_list:	'{' STRING '=' STRING ';' [repeat ...] '}'
+	;
+	
+////////////////////////////////////////////////////////////////////////////////
+
+general_animation_expressions:
+		"to" either_num_char
+	|	"begin"		STRING ','
+	|	"duration" 	STRING ','
+	|	"end"		STRING ','
+	|	"restart"	restart_values ','
+	|	"repeat" 	number ','
+	|	"repeatDuration" 	duration STRING ','
+	|	"fill"		fill_values ','
+	;
+
+transform_syntax: /* EMPTY */
+	|	"path"	STRING ','
+	|	"mPath"		STRING ','
+	|	"keyPoints"	STRING ','
+	|	"rotate"		rotate_values
+	;
+
+set_syntax:	 /* EMPTY */
+	|	"attributeType"  attrib_types ','
+	|	"to" either_num_char
+	;
+
+add_accum_syntax:  /* EMPTY */
+	|	"path"	STRING
+	|	"origin" 			STRING
+	;
+	
+animate_syntax:  /* EMPTY */
+	|	"from" 		either_num_char ','
+	|	"by" 		either_num_char ','
+	|	"calcMode" 	calmode_values ','
+	|	"values"  	list
+	|	"keyTimes" 	list
+	|	"keySplines" 	list
+	|	"additive" 	additive_values ','
+	|	"accumulate" 	accum_values ','
+	;
+	
+rotate_values:	"translate"
+	|	"scale"
+	|	"rotate"
+	|	"skewX"
+	|	"skewY"
+	;
+
+accum_values:	"none"
+	|	"sum"
+	;
+
+additive_values:	"sum"
+	|	"replace"
+	;
+
+calmode_values:"discrete"
+	|	"linear"
+	|	"paced"
+	|	"spline"
+	;
+
+attrib_type_values:	"css"
+	|	"xml"
+	|	"auto"
+	;
+
+fill_values:	"remove"
+	|	"freeze"
+	;
+
+restart_values:	"always"
+	|	"never"
+	|	"when not active"
+	;
+
+either_num_char:	STRING
+	|	number
+	;
+	
+number:	DOUBLE
+	|	BYTE
+	;	

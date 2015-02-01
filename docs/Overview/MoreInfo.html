@@ -1,0 +1,660 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>Dxf2Svg Overview</TITLE>
+<link rel="stylesheet" type="text/css" href="overview.css" />
+</HEAD>
+
+<BODY TEXT="#000000" VLINK="#800000" ALINK="#FF00FF" BACKGROUND="../images/back.gif">
+
+<H1>Dxf2Svg Overview</H1>
+<H3>Version Information</H3>
+<P>
+Here is a list of software required to add to or make changes Dxf2Svg. This list is valid as of: 
+<H4>July 25, 2003</H4>
+<CENTER><TABLE BORDER=1 CELLSPACING=1 CELLPADDING=3 WIDTH="75%">
+<TR ALIGN="middle" VALIGN="middle"><B>
+	<TH>Software</TH>
+	<TH>Version</TH></B>
+<TR ALIGN="left" VALIGN="middle">
+	<TD> 
+	<!-- <A HREF="http://ant.apache.org/">Apache Ant</A> -->
+	<A HREF="http://ant.apache.org/"><IMG SRC="../images/ant-logo.GIF" ALT="Apache Ant" BORDER=0>
+	</A></TD>
+	<TD> Apache Ant version 1.5.3 compiled on April 16, 2003 </TD>
+<TR ALIGN="left" VALIGN="middle">
+	<TD> 
+	<!-- <A HREF="http://java.sun.com/getjava/index.html">Java SDK or RTE</A> -->
+	<A HREF="http://java.sun.com/getjava/index.html"><IMG SRC="../images/get_java_green_button.gif" ALT="Get Java Now" BORDER=0></A>
+	</TD>
+	<TD> 1.4.1_01 Java(TM) 2 Runtime Environment, Standard Edition (build 1.4.1_01-b01)
+	Java HotSpot(TM) Client VM (build 1.4.1_01-b01, mixed mode) </TD>
+<TR ALIGN="left" VALIGN="middle">
+	<TD> <A HREF="http://www.autodesk.com/siteselect.htm">AutoCAD</A> </TD>
+	<TD> 2002i but this application will process any type of DXF. As
+	you go back in AutoCAD versions odd things can happen, particularly
+	with complex entities like hatches. This is due to changes in the
+	Dxf format over the years. This application was designed to work
+	with the 2000 dxf specification which remained unchanged through 2002. </TD>
+<TR ALIGN="left" VALIGN="middle">
+	<TD> 
+	<!-- <A HREF="http://www.adobe.com/svg/viewer/install/">SVG Viewer Plugin</A> -->
+	<A HREF="http://www.adobe.com/svg/viewer/install/"><IMG SRC="../images/svgdownload.gif" ALT="Get SVG Plugin" BORDER=0></A>
+	</TD>
+	<TD> Adobe SVG Viewer 3.0 (build 76)</TD>
+<TR ALIGN="left" VALIGN="middle">
+	<TD> 
+	<!-- <A HREF="http://windowsupdate.microsoft.com/">Microsoft Internet Explorer</A> -->
+	<A HREF="http://windowsupdate.microsoft.com/"><IMG SRC="../images/mslogo.gif" ALT="Microsoft Update" BORDER=0></A>
+	</TD>
+	<TD> Internet Explorer version 5.5 and up. </TD>
+</TABLE></CENTER>
+
+
+<H2>Dxf2Svg Features</H2>
+
+<P>
+There is a plethora of switches you can in any combination you can use to customize
+the result of the conversion.
+<P>
+To invoke Dxf2Svg on the command line, type this:
+<P>
+<CODE>java -jar Dxf2Svg.jar &lt;options&gt;</CODE><BR>
+or <BR>
+<CODE>java dxf2svg.Dxf2Svg &lt;options&gt;</CODE> if the application jar is in your CLASSPATH.
+<P>
+Where &lt;switches&gt; include:
+<P>
+<UL>
+	<LI> <CODE>-h</CODE> Displays help message.
+	<LI> <CODE>-l</CODE> Displays licensing message.
+	<LI> <CODE>-f</CODE> The name of the file or directory you wish to convert.
+	<LI> <CODE>-xh</CODE> Do not create HTML wrapper files for the SVG files.
+	<LI> <CODE>-s</CODE> Specify the target screen resolution of the viewing station.
+	<LI> <CODE>-u</CODE> Include URL information in CSS. Used for specifying font directories.
+	<LI> <CODE>-dtd</CODE> Include the DTD URL in output files.
+	<LI> <CODE>-p</CODE> Number of digits of precision required for numeric values. Default
+	is two with angle values defaulting to one decimal place.
+	<LI> <CODE>-v</CODE> Produce copious quantities of information about the conversion.
+	<LI> <CODE>-z</CODE> Compresses the svg file and changes the extension to <CODE>svgz</CODE>.
+	This switch will not confirm existing files. <DIV class="deleted">If any SVGZ files exist, they</DIV> <DIV class="added">all pre-existing SVGs or SVGZs will be over-written
+	silently</DIV>. The compression of the file is a two stage process. First the svg file is created, 
+	then it is compressed to a new file. <DIV class="deleted">If the SVG file already exists you will get a message
+	asking if you would like the file to be over-written even if you ask for compressed output.</DIV>
+	<LI> <CODE>-DEBUG</CODE> Even more information, mostly about Dxf2Svg's internal state.
+	Undefined elements are also output to the SVG in their correct location with a message
+	about what type of object they are and their unique ID (handle).
+	<LI> <CODE>-r</CODE> Process subdirectories recursively.
+	<LI> <CODE>-js</CODE> Include JavaScript. Here are some additional switches that control 
+	placement of scripts in the SVG file.
+	<UL>
+		<LI> <CODE>foo/bar.js</CODE> will include the <CODE>foo/bar.js</CODE> string as a path in the <CODE>src</CODE>
+		attribute of the &lt;script&gt; tag.
+		<LI> <CODE>internal</CODE> include empty &lt;script&gt; tags for user to fill in. Used for testing
+		scripts.
+		<LI> <CODE>none</CODE> do not include JavaScript (default action if <CODE>-js</CODE> switch 
+		same as not using <CODE>-js</CODE>).
+	</UL>
+	Special note should be made of the rich collection of animation JavaScripts that can be added
+	using <A HREF="sally.html">SALly's animation language</A>, all of which will over-ride any switch
+	setting that may have been set here.
+	<LI> <CODE>-css</CODE> Controls style sheet production. There are many sub switches associated
+	with this switch and are cumulative, as multiple options may be entered. All 
+	options <B>must be separated by commas</B> including the last value.
+	Be careful, some CSS combinations create redundant CSS.	
+	<UL>
+		<LI> <CODE>element</CODE> as element attributes.
+		<LI> <CODE>declared</CODE> element attributes as entity declarations (default).
+		<LI> <CODE>external</CODE> make CSS in 'css/svg.css' if possible.
+		<LI> <CODE>only</CODE> make 'svg.css' in target graphic's directory and exit.
+		<LI> <CODE>spar_c130</CODE> make internal CSS with spar c130 line weights and layer colours.
+		(The Sally API will over-ride any setting made with this switch.)
+		<LI> <CODE>spar_only</CODE> make a CSS with standard Spar pen weights bylayer and exit.
+	</UL>
+	Note: All custom line weights are assumed to be in inches.	
+	<LI> <CODE>-c<EM> &lt;integer&gt; </EM></CODE> coerce all colours to the AutoCAD<SUP>&reg;</SUP>
+	colour represented by <EM>integer</EM>. This will over-ride all colour settings so that
+	imbedded blocks with colours set to something other than BYLAYER will not need to be
+	redefined to display correctly. 
+	
+	<DIV CLASS="deleted">Caveat: coercing causes all colours to be represented	by the predefined colour integer with the exception of white. 
+	Also note that <CODE>-c</CODE>
+	over-rides custom pen colours set in the <CODE>config.d2s</CODE>. Generally, it is better 
+	to control colours with the <CODE>penTable</CODE>
+	</DIV>
+	
+	<DIV CLASS="added">
+	Coerce will override any default colour, that is, any pen that has a custom colour is ignored
+	as a candidate for coersion in favour of the custom colour. <EM>Example:</EM> The default pen
+	numbered 81 will have a colour 81. If you change that pen's colour using <A HREF="sally.html#pentable">SALly</A>, then this pen will retain whatever colour you specified in the 
+	pen table. If you don't specify a change of colour for pen 81, then the colour will be coerced
+	to the colour specified by <CODE><EM>&lt;integer&gt;</EM></CODE>. <font color="red">Hint:</font> If you specify a pen in the pen table <EM>with its original colour</EM>, the pen colour will not be coerced. This is handy if you are processing colour foldouts and you want the existing colours to continue to the finished file. 
+	</DIV>.
+	
+	<LI> <CODE>-line_cap</CODE> Explicitly set line cap type. Valid line caps are:
+	<CODE>b[utt]</CODE>, <CODE>s[quare]</CODE> or <CODE>r[ound]</CODE>.
+	<LI> <CODE>-line_join</CODE> Explicitly set line join type. Valid line joins are:
+	<CODE>m[iter]</CODE>, <CODE>r[ound]</CODE> or <CODE>b[evel]</CODE>. The DXF file will over-ride 
+	<CODE>-line_join</CODE> if the DXF variable <CODE>$JOINSTYLE</CODE> has been set to a non-zero value.
+	<LI> <DIV CLASS="deleted"><CODE>-boardno_wrapper_names</CODE> Names the HTML wrapper files after the illustration's 
+	boardno names. This switch and the <CODE>-xh</CODE> are related. If the <CODE>-xh</CODE>
+	switch is used <CODE>-boardno_wrapper_names</CODE> will be ignored. If the file does not
+	contain board numbers, the wrapper file(s) will be named after the dxf file.</DIV>
+	<LI> <CODE>-db &lt;database_path&gt;</CODE> switch will pre-search the conversion file list for 
+	figure titles and numbers, sheet numbers, boardnos and NDIDs. All of this information is stored
+	in a database called &quot;<CODE>LibraryCatalog.ser</CODE>&quot; and output as <CODE>XML</CODE>
+	each time a conversion is run (see <A HREF="#dtd">DTD</A> for more information.
+	<P>
+	This database is also used when <CODE>-boardno_wrapper_names</CODE> is selected. When the 
+	wrappers are generated the database is searched for &quot;family members&quot; (additional sheets)
+	and if any are found, links to those figures are added in the HTML. (There used to be a switch
+	called <CODE>-group_families</CODE> that did this explicitly, but this functionality is now
+	automatic if the library database can be found.)
+	<LI> <CODE>-fuzz &lt;double&gt;</CODE> The tolerance for Point location detection in 
+	<CODE>collaborate</CODE> mode. The default tolerance is 0.05".
+	<LI> <CODE>-IETM</CODE> Using this switch will sets all the other switches that you need to
+	convert graphics for the Spar ITEM. The switches that are set are:
+	<UL>
+		<LI> <CODE>-f &lt;current directory&gt;</CODE>
+		<LI> <CODE>-c &lt;7 (black)&gt;</CODE>
+		<LI> <DIV CLASS="deleted"><CODE>-z</CODE></DIV> (deleted).
+		<LI> <CODE>-s &lt;800x600&gt;</CODE>
+		<LI> <CODE>-db &lt;current directory&gt;</CODE>
+		<LI> <DIV CLASS="deleted"><CODE>-suppress_default_js</CODE></DIV>
+	</UL>
+	<B>Tip:</B> If these setting don't satisfy, <CODE>-f</CODE>, <CODE>-s</CODE>, <CODE>-c</CODE>  and <CODE>-db</CODE> can
+	be reset to other values if they are entered on the command line <EM>after</EM> the <CODE>-IETM</CODE> switch.
+	<LI> <CODE>-MY &lt;attribute&gt; &lt;attribute_value&gt;</CODE> Use this to set an onclick event
+	for an &lt;a&gt; tag in a parts list figure. Looks like <CODE>...onclick="someFunc('012')"...</CODE>
+	would be entered: <DIV CLASS="deleted"><CODE>-MY onclick someFunc</CODE>. Note there are no parenthesis on the function
+	and</DIV>
+	
+	<DIV CLASS="added">
+	<A NAME="eventAttributeModification">Note</A> that parenthesis are now supported and expected. You may also include any number of arguments
+	you wish. One of the arguments could be the content of the <CODE>SvgText</CODE> element which, in the case of a
+	parts list, will contain a single integer. This value will be added in the correct
+	argument order
+	by using the keyword <CODE>implied</CODE>. The <CODE>SvgHyperLink</CODE> class is responsible for creating 
+	the appropriate links and within that class are methods for changing the order of any arguments
+	you wish to pass to the javascript. It uses another class <CODE>EventAttributeModifier</CODE> 
+	which actually handles the calculations that make this work. The upshot is that if you can 
+	now write a function in the following
+	manner: <CODE>-MY onclick "someFunc(argument1, argument2, implied, argument4)"</CODE>. The implied
+	key word will take the <CODE>SvgText</CODE> content and format it to the MY specification 
+	(all numbers are padded to three characters with preceeding zeros).
+	</DIV>
+	<P>
+	<DIV CLASS="added">When the -MY switch is used it used to require that all the part numbers
+	be hyperlinked text in the AutoCAD files, but now it automatically places all the index
+	numbers in anchor tags with the afore mentioned Attribute and Attribute value. Note: 
+	you must quote the <CODE>implied</CODE> keyword. The values that replace <CODE>implied
+	</CODE> are verbatim and are NOT automatically quoted. If a part number already
+	has a hyperlink, that link is honoured and not modified by this -MY functionality.</DIV>
+	<BR>
+	the argument is calculated automatically from the content of the child text tag if it matches
+	a pattern for a part number (<CODE>^[A-Z]?\\p{Digit}{1,3}[A-Z]?$</CODE> This catches 
+	access panel identifiers as well).
+	
+	
+	<LI> <CODE>-notes</CODE> Informs the conversion process that some of the files may contain notes 
+	that need to be imported into the SVG files. The output of this process
+	is a set of arrays of notes placed in the &lt;SCRIPT&gt; tags. The arrays are indexed by note
+	number (the zero array index value is null). It is up to the user to implement
+	the JavaScript that will use these arrays appropriately (see SALly documentation for
+	<CODE>:javascript</CODE> keyword or use an external file and use the <CODE>-js</CODE> switch). The trigger for any animation event could be a mouse over on 
+	a note number. To make this work you will need to add an event to the text elements on the note
+	number layer. Use the <CODE>:add</CODE> <A HREF="sally.html#add">keyword</A> and 
+	<A HREF="#eventAttributeModification">here</A>
+	for more details.
+	Using '-notes' switch automatically turns on the <CODE>-db</CODE>
+	switch if it hasn't already been invoked, which in turn will check for an existing Database
+	before starting.
+	<P>
+	Note to users: If you are processing MY parts lists you need only supply the '-MY' and the
+	event attribute and its javascript function value which looks something like:<BR>
+	'<CODE>-MY onclick showPart(implied)</CODE>'<BR>
+	If you want notes to appear use '-notes' switch then use <A HREF="sally.html">SALly</A> and write 
+	your what-to-do code in the <CODE>:javascript</CODE> section and finally use the 
+	<A HREF="sally.html#add">:add</A> in the following manner:
+	<PRE>
+	:add "text" onlayer "NOTENUMS"{
+		"onmouseover" = "showNote(implied)";
+	}
+	</PRE>
+	The argument implied is used because we need to signal the javascript about which note we have
+	moused over. The actual notes are sorted out from the DXF files and are automatically included
+	if any one of the sheets of a figure has notes on it. The javascript must refer to the note 
+	arrays by name and by default the name of the english note array is <font color="red">englishNote</font>
+	and the array of French notes is <font color="red">frenchNote</font>.
+	<BR>
+	<BR>
+	Here is a list of modifiers that can be used to control the names of the layers that notes appear on and the layer names where they can be moved to after note extraction:
+	<UL>
+		<LI> <CODE>-english_note_layer_name &lt;layer_name&gt;</CODE> Informs the conversion process that any English notes can be found on a layer called &lt;layer_name&gt;. Searches for note patterns will take place on this layer only. The default layer name is 'engnotes'.
+		<LI> <CODE>-french_note_layer_name &lt;layer_name&gt;</CODE> Informs the conversion process that any French notes can be found on a layer called &lt;layer_name&gt;. Searches for note patterns will take place on this layer only. The default layer name is 'frenotes'.
+
+		<LI> <CODE>-note_number_layer_name &lt;layer_name&gt;</CODE> Like its sister switches this switch identifies the name of layer where the note numbers can be found, but unlike her sisters, this switch has no target note number destination layer switch since it is anticipated that the numbers require no translation, there is no need to switch them <CODE>on</CODE> and <CODE>off</CODE>. The default value for this switch is 'notenums'.
+		<LI> <CODE>-default_target_note_layer_name &lt;layer_name&gt;</CODE> This is the layer that any text goes to if the specified target layer cannot be found. The default is 't'.
+	</UL>
+	<LI> <CODE>-english_layer_name &lt;layer_name&gt;</CODE> Changes the name of the layer where english text can be found from the default 'englsih'. After the conversion takes place, it may be useful to place the notes text that was found, onto another layer that can take advantage of language switching. Use this switch to identify that layer.
+	As an example consider notes that are put on layer '<CODE>englishnotes</CODE>' and you wanted to include language switching. If the english layer is set to '<CODE>englishtext</CODE>' you would use this switch and specify 'englishtext' as the argument to this switch.The default layer is 'english'. <B>If the layer specified here cannot be found the default action is to use default_target_note_layer_name. That switches default value is 't'.</B> The default value for this switch is 'english'.
+	<LI> <CODE>-french_layer_name &lt;layer_name&gt;</CODE> Denotes the French text layer name if it is not the default of 'french'. This switch performs the same function as the switch above it but for the French notes layer. The default layer is 'french'. 
+	If you use all of the default values you do not need to use any of these switches. Using any of these switches if there are no notes has no effect.
+	<LI> <CODE>-suppress_default_js</CODE> This switch switches off the automatic inclusion of default language switching JavaScript functions. If the switch is not used, the boiler plate JavaScript functions
+	will be used. This allows the user to redefine this functionality for what-ever reason by using the <CODE>:javaScript</CODE> keyword in SALly config.d2s script. <B>NOTE:</B> Using this switch
+	also removes the <CODE>onload=init()</CODE> attribute from the &lt;SVG&gt; element - freeing 
+	it up for other tasks if necessary. To date the only default javascripts are language switching
+	functions.
+	<LI> <CODE>-include &lt;file_name&gt;</CODE> This switch allows the user to embed an arbitrary text file into the SVG document. You may wish to do this to include a sub-SVG that has a menu in it, for example. Or you could also place your javascript into the file this way, or even comments. What ever is in the file defined by the include switch will be placed in all of the converted SVGs word-for-word. The switch is repeatable so you can include as many files in the target SVG as you wish. The files are included in the order that they appear on the command line or the config.d2s file.
+	<LI> <CODE>-use_dxf_object_colour</CODE> This value will allow objects to render in the colour
+	the illustrator intended. This can be done by setting the colour of a DXF object to something 
+	other than BYLAYER. The default action is to render all objects to the colour of the layer
+	they belong to.
+	<LI> <CODE>-update_db_only</CODE> Does all the preprocessing to determine sheets and figures,
+	testing for graphic boardnos and proper titles but does not convert the files to svg.
+	<LI> <CODE>-collaborate &lt;layer_name&gt;</CODE> Searches this layer for all lines arcs
+	(basically all double ended graphic elements) and if they are connected (share an end point)
+	joins them together so they become polylines. You would want this so you could add animation
+	or event attributes to it as a single co-heasive group. See also Sally animation collaborate 
+	command. They have identical functionality, but one can be used from the command line even
+	if there is no animation.
+	<LI> <CODE>-swap_svg_link_for_html_link</CODE> This method dynamically switches any link 
+	that contain <CODE>.svg(z)</CODE> to <CODE>.html</CODE>. This allows users who entered
+	link targets as svg files to change their minds and point to the files wrapper html file.
+	The function will replace the first single instance of the pattern <CODE>\\.(svgz|svg|SVGZ|SVG)
+	</CODE> with <CODE>.html</CODE>, thus leaving any fragment reference untouched.
+</UL> 
+<P>
+Incomplete multi-part switches throw an <CODE>IncompleteSwitchSettingException</CODE> at runtime. 
+<P>
+With the exception of the <CODE>-IETM</CODE> switch mentioned above, you may enter the command
+line switches in any order.
+
+<H2>Additional Features</H2>
+<P>
+<UL>
+	<LI> Converts DXF hyperlinks.
+	<LI> Hyperlinks can be placed on any DXF (read SVG) object(s).
+	<LI> Creates and/or maintains an XML database using the <CODE>-db</CODE> switch.
+	<LI> Automatic linking of multi sheet illustrations.
+	<LI> generates HTML wrapper for each file with multiple languages if desired.
+	<LI> Auto-detects multi pule languages and automatically adds language switching buttons into 
+	HTML wrappers.
+	<LI> Auto-detection of discrete drawing elements into continuous objects (i.e. an arc, line, arc
+	can be tested and grouped into one continuous wire run).
+	<LI> Searchable SVG content.
+	<LI> Powerful DXF search engine.
+	<LI> Automated complex conversion tasks with configuration files.
+	<LI> Include custom JavaScript or ECMA script functions from configure files.
+	<LI> Controllable layer draw ordering.
+	<LI> Controllable pens (colour, line width).
+	<LI> Controllable layer definitions (pen and fill colour).
+	<LI> Addition of powerful animation functionality from the API.
+	<LI> Controllable font mapping and scaling to 1/1,000,000 of a point accuracy.
+	<LI> SVGZ un zipper to unzip svg files that have been converted with the <CODE>-z</CODE> switch
+	<LI> SVG zipper to re zip svg files if desired.
+	<LI> A library catalog maintenance utility to manage and merge serialized databases produced
+	by Dxf2Svg during IETM conversion.
+	<LI> Intelligent note extraction which allows notes to appear as popups (or whatever is desired)
+	on all sheets of a figure.
+</UL>
+
+
+<H3>How to Run Dxf2Svg Without the Command Line</H3>
+<P>
+You can also invoke the application by double-clicking the Dxf2Svg.jar file. If there is no config.d2s
+file in the current directory, an error message window will be displayed. Dismissing the window will
+exit the application. However if a config.d2s file does exist, it is silently read and parsed
+and the instructions within are executed. 
+<P>
+It is permissible to use a configuration file of any
+name as long as it ends with <CODE>'.d2s'</CODE>. The command line must be used and the name of
+the file must be the <EM>only</EM> argument on the command line.
+
+<H3>Dxf2Svg Application's Programmable Interface (API)</H3>
+<P>
+There is a small API language which provides a convenient method to perform conversion, called SALly.
+SALly allows every aspect of conversion to be controlled from one file. The advantage of the 
+configure file is it is:
+
+<UL>
+	<LI> Easy to set up.
+	<LI> Provides a permanent record of all conversion specifications.
+	<LI> The configure file can be reused repeatedly.
+	<LI> Different conversions can be performed on the same data set.
+	<LI> Diagnosis of conversion errors is simplified.
+	<LI> Some functionality of Dxf2Svg is not available from the command line. The Pen table
+	is a good example; if you require specific line weights for certain pens, the only way to
+	do this is with SALly. Here is a more exhaustive list of additional functions that are 
+	available through SALly:
+	<UL>
+		<LI> Controlling layer draw order (order layers).
+		<LI> Animation, stand alone in &lt;script&gt; tags and inline functions on elements.
+		<LI> Setup pen tables. Pen tables include the pen number, colour and line-weight.
+		<LI> Layer styles. Controls the assignment of a specific pen and optional fill colour
+		for a specific layer.
+		<LI> Font map. Map a font used by AutoCAD to another font (or the same font) and add
+		scaling to precisely fit a font's size representation in output SVG file.
+	</UL>	
+</UL>
+
+<P>
+See <A HREF="sally.html">SALly Documentation</A> for more details.
+
+
+
+<P ><H2>List of AutoCAD Entities Handled by Dxf2Svg:</H2>
+<UL>
+	<LI>ARC
+	<LI>CIRCLE
+	<LI>DIMENSION
+	<LI>ELLIPSE
+	<LI>HATCH
+	<LI>IMAGE
+	<LI>INSERT
+	<LI>LINE
+	<LI>LWPOLYLINE
+	<LI>(2D)POLYLINE
+	<LI>POINT
+	<LI>SOLID
+	<LI>TEXT
+	<LI>MTEXT
+</UL>
+<P ><H2>List of AutoCAD Entities Not Handled by Dxf2Svg:</H2>
+<UL>
+	<LI>SPLINE - Replace with polyline or line and arc segments.
+	<LI>BLOCK REFERENCE HATCH - Explode or replace with HATCH.
+	<LI>3DMESH
+</UL>
+
+
+<H2>Files Associated With Dxf2Svg</H2>
+<P>
+There are a number of files that will help you convert DXF files.
+<UL>
+	<LI> <CODE>config.d2s</CODE>, <CODE>*.d2s</CODE> contains the instruction list 
+	that is used to control the conversion process. It is based on a simple language
+	I wrote called <A HREF="sally.html">SALly</A> which stands for Svg Animation Language, the additional 'ly'
+	doesn't stand for anything, but is used as a memory aid. See <A HREF="sally.html">here</A> for 
+	more details.
+	<LI> <CODE>LibraryCatalog.ser</CODE> - the conversion drawing database of titles, boardnos
+	figure numbers etc., as a set of Java serialized objects (Hashtables mostly).
+	<LI> <CODE>boardno-control.xml</CODE> - the XML version of the <CODE>LibraryCatalog.ser</CODE> which can
+	be written out at any time and specifically after each conversion that uses <CODE>-db</CODE>.
+</UL>
+
+
+
+
+<H2>DXF Drawing Preparation for Conversion:</H2>
+<P>This section outlines some of the things the illustrator can do to improve
+the conversion of DXF files from AutoCAD<SUP>&reg;</SUP>.
+<P>
+<OL>
+	<P><H3>Preparations for All Drawings</H3>
+	
+	<LI> Add notes (TBD).
+	<LI> Purge drawings.
+	<LI> Save the file as AutoCAD DXF 2000.
+	<LI> Remove crop marks, PLOTBORDER and ASWINDOW.
+	<LI> Make sure the illustration has boardno(s).
+	<LI> Unlock all layers and move the entire drawing from the bottom left hand corner of the illustration
+	frame to coordinates 0,0.
+	<LI> Set the drawing limits to the illustration's frame.
+	<LI> Remove all drawing elements from outside the border <EM>except NDID
+	and titles which must remain</EM>.
+	<LI> Replace SPLINE objects with ARCS and or POLYLINES.	
+</OL>	
+<OL START="10">	
+	<P>
+	<H3>Standard Illustration (Non-Wiring Diagram, Non-Schematic) Preparation</H3>
+	
+	<LI> Replace WIPEOUTs with ARLINES or HALOS. 
+	<LI> Do not explode blocks.
+</OL>	
+<OL START="10">
+	<P>
+	<H3>Wiring Diagrams Or Schematics Preparation</H3>
+	
+	<LI> Replace all blocks with the &lt;svgBlockName&gt;.dwg
+	from <A HREF="file://l:/andrew/blocks">the location L:\andrew\blocks</A>.
+	<LI> Explode any blocks of components that are animated.
+	<LI> Break wire connections at connection intersections.
+	<LI> Place all wires on a new layer called WIRE. This will allow you to keep one script for 
+	all conversions instead of a script for animation and a script for regular conversions.
+	<LI> Ganged wires need to be separated. To do this a continuous polyline should be drawn from
+	the source to the destination and the old lines removed. 
+	(<B>Tip:</B> if you use PLINE you can later FILLET all radii simultaneously). 
+	<LI> This is how to span objects so that wire runs can continue through a plug or over text.
+	<IMG SRC="../images/plug.png" ALT="Wire run connections through a plug" BORDER=1>
+	<P>
+
+</OL>
+<P>
+
+<H2>More Guidelines for Conversion:</H2>
+<UL>
+	<LI> Never use blocks or layers or anything that has names that start with a digit.
+	<LI> Leave all titles NDID numbers and any other important information on the illustration.
+	Any text outside of	the drawing limits frame will be included in output SVG inside 
+	of &lt;desc&gt; tags. This information is used during the conversion and is important to
+	search engines, but will not be visible.
+	<LI> Make sure all fonts used in all styles are TrueType<SUP>&reg;</SUP> fonts.
+	<LI> Change all object's colours to &lt;BYLAYER&gt; or you may see inexplicable colours appearing
+	in the conversion, or alternatively, use the <CODE>-c</CODE> option to coerce colours to 
+	the desired value.
+	<LI> Don't use a spline as a hatch boundary. They will either be drawn very
+	crudely or throw an exception during conversion.
+	<LI> Try to save the DXFs as DXF2000 where possible. Dxf2Svg will convert older DXF files
+	notably DXF R14, but converting R12 or earlier versions may produce unexpected results
+	because of the changes to the DXF specification over the years. Besides, the files produced
+	by earlier versions are typically larger, or their corresponding SVG files are larger.
+	<LI> Dxf2Svg is generally, case insensitive. <B>Layer0</B> and <B>LAYER0</B> are the same.
+	This applies to Layer, Style or Line Type names. Where this does not apply is for
+	block names and their references, object IDs and image names. Do not rely on case sensitivity
+	to differentiate objects.
+	<LI> Explode all drawing blocks or dimension blocks you want animated. Dxf2Svg is not required
+	to handle dimensions as part of its design specification.
+	<LI> Turn on all layers you wish to see in the final conversion. Dxf2Svg will automatically 
+	detect both French and English layers and adds JavaScripts that switch them on and off
+	at the user's request. If, however, you switch the french layer off and convert the file,
+	the information on the french layer will not become visible when you try and switch languages.
+	The end result will be the English layer will get switched off and the french will remain off.
+	<LI> If you wish information not to appear in the drawing (like plotborder) switch the layer
+	off and freeze the layer. A layer that is just frozen will still be visible in the conversion.
+	<LI> It is possible for a block to have two or more attribute tags with the same name. 
+	This should be avoided to prevent name clashes in SVG name space. The consequences are that 
+	any tag that has the same name as another tag, that is in the same block, and has a different
+	style will display with the style set by the first tag declared (this is pretty rare).
+</UL>
+<P>
+
+
+
+
+<H2>Information About Images</H2>
+<P>
+Images that can be inserted into DXF files will appear in the
+SVG file. DXF files can handle an impressive set of graphic file formats as can
+SVG but the two lists overlap with the following formats:
+<UL>
+	<LI> JPG, JPEG - Joint Photographic (E)xpert's Group.
+	<LI> PNG - Portable Network Graphic.
+</UL>
+<P>
+Here are some tips for getting your images into SVG. <DIV class="deleted">When you save a DXF file
+that contains an image, a reference to the files location is saved as an absolute
+path. If the DXF file gets moved, the image has to be remapped to the DXF file,
+but if you are converting the file you probably are going to move the file to
+the display directory, so how do you refresh the image for the SVG?</DIV>
+
+<P>
+Dxf2Svg will check to see if the DXF's reference is a valid file and if it
+will get passed to the SVG file. If not, a search for the file is made in
+an <code>images</code> directory below the current directory.
+If such a directory is found, this path is added automatically to the reference
+in the SVG file. If that fails then, during the conversion,
+it is assumed that the image will be found in the current conversion directory.
+This is the default behaviour.
+<P>
+Further if the file is found it will be encoded automatically and embedded intot the SVG graphic using Base64 encoding. See <A href="http://www.ietf.org/rfc/rfc2397.txt">RFC2397</A> and <A 
+href="http://www.ietf.org/rfc/rfc2045.txt">RFC2045</A> (1996-11) for information on Base64 encoding.
+If the graphic cannot be found, it is assumed that the graphic is not available at conversion time and so the URL reference to the graphic will be used instead.
+
+
+
+<H2>Known Issues</H2>
+
+<P >
+Graphic file conversion ranges in complexity from the trivial to the
+impossible. On that scale, the type of conversion Dxf2Svg performs is
+mid-range. Both file formats are text based, both are vector formats,
+but after that, the similarities end. Please keep this in mind as you
+read over the bug list. Some of the bugs listed here cannot be fixed
+because of the very nature of the conversion. Others are the limitation
+of the viewer, and last but not least; some are just short comings of 
+the programmer. Short comings are the easiest to fix because it is
+just a matter of education and coding. The plugin problems, which are
+few, may or may not be fixed in the next release; that is up to Adobe<FONT SIZE="-1"><SUP>TM</SUP></FONT>.
+</P>
+
+
+<P >
+A good example of the type of problem you face converting from DXF to
+SVG is the fact that DXF uses double floating precision to represent
+all coordinates and angles. The values are translated into strings,
+and then written to file. Then Dxf2Svg comes along and reads the file
+converts the value back into a Java double (AutoCAD uses C type serialization
+while Java has its own platform independent format). The values are then
+used in calculations and then converted back into strings for output as
+XML.
+</P>
+
+<P >
+This type of precision error can be reduced by using a binary type dxf file
+format which Dxf2Svg reads quite happily (and more quickly). But this type
+of DXF is, in my experience, less than 1% of the DXFs that will cross
+your desk.
+</P>
+
+
+<P >
+<H3>Problems With Scaling objects</H3>
+<P>
+Every object you draw in SVG has its own transformation 'space'. What that
+means is that, when you perform any transformation on an object you are changing
+the view of the object, not the object itself.
+
+<H4>An Example:</H4>
+<P>
+Suppose you were drawing a box on the screen and you wanted the line weight
+to be 0.05 inches thick, the height and width to be 1 inch and positioned
+at a point 1 inch from the top of the drawing and 1 inch from the left side
+of the drawing. When you scale that object (a transformation) the
+object will appear to be twice as large, but there is something else that
+is foreign to an Acad user's eyes: a byproduct of the scale is that the line
+weight has doubled, and the object is no longer positioned at the location
+it was originally drawn at.
+<P>
+This is because the object is not really twice as big; its size is still 
+1" x 1". What has happened is that the 'space' that object lies in
+is temporarily made twice as big, and the scaling occurred from 
+the (0,0svg) origin point. The next object in the file is not 
+effected because the space is only distorted locally for that one object.
+The exception to that statement is if the object is a group and then all
+elements in the group will share the &lt;g&gt; transformation. It's just
+a different way of doing things, but the complication is that the scaled 
+line weight on entity references (blocks) cannot be altered. 
+<P>
+To get around this problem, if it is that big a deal, is to explode the block
+in AutoCAD before conversion.
+
+<P >
+<H3>Problems With Text</H3>
+<UL>
+	<LI> Multi line text may not wrap identically to AutoCAD. This is due to
+	the discrepancies of fonts used by AutoCAD verses fonts available to the
+	viewer at the time of display (perhaps on a different computer) and
+	floating point double drift of calculations.
+
+	<LI> Because of the differences between SVG and DXF handling of TrueType
+	Fonts MTEXT elements that do not have an insertion point of upper left, may
+	not render in exactly the right spot.
+</UL>
+
+
+<H3>Problems With Hatches</H3>
+<UL>
+	<LI> Dashed line types that appear in hatches (and paths in general), may
+	not appear to render correctly because of a bug in Adobe's
+	SVG viewer (version 3.0 and below). The viewer draws a very thin,
+	but visible line over the entire extents of the line or path.
+	Other shapes do not exhibit this behaviour.
+
+	<LI> The SvgEllipse <CODE>renderAsHatchBoundary()</CODE> produces
+	inaccurate results for an unknown reason. This effects only hatch objects
+	made up of, or containing elliptical arcs as hatch edge boundaries.
+
+	<LI> SvgSpline does not work yet owing to it's low priority, the
+	complexity of the math involved to get it working and because of the limitations of
+	the algorithm that converts a spline into B&eacute;zier curves. Next release.
+	In the mean time a spline boundary edge will cause
+	<CODE>UndefinedHatchEdgeException</CODE> .
+
+	<LI> Line type patterns in both lines and hatches may not match AutoCAD's
+	Line Types exactly because of floating point double 'drift'.
+</UL>
+<P >
+
+<H3>Problems With Sally</H3>
+<P>
+When using the <CODE>javaScript</CODE> keyword, SALly will <EM>tokenize</EM> whole strings
+as tokens. If you have a line that contains lone symbol like brace (<CODE>&quot;}&quot;;</CODE>),
+the tokenizer will pass the token &quot;}&quot; to the parser which will analyse it as a 
+string. The contents of the string will match the brace key symbol, and a syntax exception will
+be thrown. To over come this problem place a whitespace char before or after the brace.
+</P>
+
+<P>Please feel free to submit bugs to <A HREF="mailto:andrew.nisbet@L-3com.com?subject='Dxf2Svg Bug Report'">
+me</A> as you come across them.
+</P>
+</P>
+<H3>SVG Object Tree</H3>
+<P>
+Here is are the SVG graphic objects and how they relate to one another through OOP inheritance.
+<P>
+<center><IMG SRC="../images/GraphicObjectTree.png" ALT="Svg object tree" BORDER=1></center>
+<P>
+<P>
+<P>
+<H3><A name="dtd">Figure and Sheet XML Database DTD</A></H3>
+<P>
+The DTD is presented here as reference, but is subject to change. The most up to date version
+can be found in the Java class LibraryCatalog documentation.
+<P>
+<pre>
+&lt;!DOCTYPE graphiclist [
+&lt;!ELEMENT graphiclist (book+) &gt;
+&lt;!ELEMENT book (figure+) &gt;
+&lt;!ATTLIST book 
+	ndid	 		CDATA		#REQUIRED &gt;
+	
+&lt;!ELEMENT figure (sheet+, title*) &gt;
+&lt;!ATTLIST figure 
+	figNo	 		CDATA		#REQUIRED 
+	totalSheets		NMTOKEN 	#REQUIRED &gt;
+	
+&lt;!ELEMENT sheet (#PCDATA) &gt;	
+&lt;!ATTLIST sheet
+	sheetNo	 		NMTOKEN		#REQUIRED
+	engBoardno 		CDATA		#IMPLIED 
+	freBoardno 		CDATA		#IMPLIED
+	bilBoardno 		CDATA		#IMPLIED &gt;
+	
+&lt;!ELEMENT title (#PCDATA) &gt;
+&lt;!ATTLIST title
+	language		CDATA		#IMPLIED &gt;
+]&gt;
+</pre>
+</BODY>
+</HTML>
